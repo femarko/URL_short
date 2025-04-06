@@ -1,8 +1,15 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, TypeVar
 
 
-class URLShortened:
+class DomainModelBase:
+    pass
+
+
+DomainModel = TypeVar("DomainModel", bound=DomainModelBase)
+
+
+class URLShortened(DomainModelBase):
     def __init__(self,
                  original_url: str,
                  short_url: str,
