@@ -1,4 +1,5 @@
 import dataclasses
+
 from path_definitions import ROOT
 import os
 
@@ -7,24 +8,24 @@ from  dotenv import dotenv_values
 
 mode = os.getenv("MODE", "dev")
 
-def env_vals(mode: str):
-    match mode:
-        case "dev": vals = dotenv_values(f"{ROOT / '.env.dev'}")
-        case "test": vals = dotenv_values(f"{ROOT / '.env.test'}")
-        case "prod": vals = dotenv_values(f"{ROOT / '.env.prod'}")
-        case _: vals = dotenv_values(f"{ROOT / '.env.test'}")
-    return vals
-
 
 @dataclasses.dataclass
 class Config:
-    db_url = (f"postgresql://{env_vals(mode=mode).get('POSTGRES_USER')}:"
-              f"{env_vals(mode=mode).get('POSTGRES_PASSWORD')}@"
-              f"{env_vals(mode=mode).get('POSTGRES_HOST')}:"
-              f"{env_vals(mode=mode).get('POSTGRES_PORT')}/"
-              f"{env_vals(mode=mode).get('POSTGRES_DB')}")
-    mode = mode
-    env_file = env_vals(mode=mode).get("ENV_FILE")
+    def __init__(self, mode: str):
+        self.mode = mode
+        self.vals = dotenv_values(f'{ROOT}/.env.{mode}')
+        self.env_file = self.vals.get("ENV_FILE")
+
+    @property
+    def db_url(self):
+        if mode == "test":
+            return "sqlite:///:memory:"
+        return (f"postgresql://"
+                f"{self.vals.get('POSTGRES_USER')}:"
+                f"{self.vals.get('POSTGRES_PASSWORD')}@"
+                f"{self.vals.get('POSTGRES_HOST')}:"
+                f"{self.vals.get('POSTGRES_PORT')}/"
+                f"{self.vals.get('POSTGRES_DB')}" )
 
 
-settings = Config()
+settings = Config(mode=mode)
