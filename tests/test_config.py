@@ -3,8 +3,10 @@ from dotenv import dotenv_values
 
 from path_definitions import ROOT
 
-envfile_values = dotenv_values(ROOT / ".env.test")
-fake_mode = "test"
+
+fake_mode = "dev"
+envfile_values = dotenv_values(f'{ROOT}/.env.{fake_mode}')
+
 
 def test_env_vals():
     assert env_vals(mode=fake_mode).get("POSTGRES_USER") == envfile_values.get("POSTGRES_USER")
@@ -16,10 +18,11 @@ def test_env_vals():
 
 
 def test_settings():
+    assert settings.mode == fake_mode
     assert settings.db_url == (f"postgresql://{envfile_values.get('POSTGRES_USER')}:"
                                f"{envfile_values.get('POSTGRES_PASSWORD')}@"
                                f"{envfile_values.get('POSTGRES_HOST')}:"
                                f"{envfile_values.get('POSTGRES_PORT')}/"
                                f"{envfile_values.get('POSTGRES_DB')}")
-    assert settings.mode == fake_mode
+
     assert settings.env_file == envfile_values.get("ENV_FILE")

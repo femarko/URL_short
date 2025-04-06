@@ -5,7 +5,7 @@ import os
 from  dotenv import dotenv_values
 
 
-mode = os.getenv("MODE", "test")
+mode = os.getenv("MODE", "dev")
 
 def env_vals(mode: str):
     match mode:
