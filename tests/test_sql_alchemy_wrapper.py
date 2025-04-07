@@ -1,17 +1,7 @@
-import pytest
-
-from sqlalchemy.orm import clear_mappers
 from sqlalchemy import text
 
 from src.shortener_app.domain import models
 from src.shortener_app.orm_tool.sql_aclchemy_wrapper import orm_conf, table_mapper
-
-
-@pytest.fixture(autouse=True, scope="session")
-def mapp_tables():
-    orm_conf.start_mapping()
-    yield
-    clear_mappers()
 
 
 def test_start_mapping():
