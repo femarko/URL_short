@@ -1,7 +1,4 @@
 from typing import Any, Protocol
-
-from sqlalchemy import desc
-
 from src.shortener_app.domain.models import URLShortened
 
 
