@@ -18,10 +18,10 @@ def save_urls(original_url: str, short_url: str, uow: UnitOfWork) -> int:
     return urls_instance_id
 
 
-def get_url(urls_instance_id: int, uow: UnitOfWork) -> URLShortened:
+def get_original_url(urls_instance_id: int, uow: UnitOfWork) -> str:
     with uow:
         result: URLShortened = uow.url_repo.get(instance_id=urls_instance_id)
-    return result
+    return result.original_url
 
 
 def delete_url(urls_instance_id: int, uow: UnitOfWork) -> dict[str, str | int]:
