@@ -19,3 +19,11 @@ class URLShortened(DomainModelBase):
         self.original_url = original_url
         self.short_url = short_url
         self.save_date = save_date
+
+    def get_params(self):
+        return {
+            "id": self.id,
+            "original_url": self.original_url,
+            "short_url": self.short_url,
+            "save_date": self.save_date
+        }

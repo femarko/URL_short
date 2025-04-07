@@ -16,9 +16,6 @@ class RepoProto(Protocol):
     def delete(self, instance) -> None:
         pass
 
-    def get_recent(self, number, page, per_page) -> dict:
-        pass
-
 
 class Repository:
     def __init__(self, session):
