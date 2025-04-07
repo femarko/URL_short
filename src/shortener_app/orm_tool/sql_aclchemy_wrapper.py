@@ -1,35 +1,42 @@
 import dataclasses
-from typing import Type
 
-from sqlalchemy import create_engine, orm
+from sqlalchemy import create_engine, orm, Table, Column, Integer, String, DECIMAL,DateTime, func
 from sqlalchemy.exc import IntegrityError
 from functools import lru_cache
 
-from src.shortener_app.domain.models import DomainModel
+from src.shortener_app.domain.models import URLShortened
 from src.config import settings
-from src.shortener_app.orm_tool.db_tables import DB_Table
 
 
+engine = create_engine(settings.db_url)
+session_maker = orm.sessionmaker(bind=engine)
 table_mapper = orm.registry()
+
+url_shortened = Table(
+    "url_shortened",
+    table_mapper.metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("original_url", String(500), nullable=False),
+    Column("short_url", String(35), nullable=False),
+    Column("save_date", DateTime, server_default=func.now(), nullable=False)
+)
 
 
 @dataclasses.dataclass
 class ORMConf:
-    def __init__(self):
-        self.integrity_error = IntegrityError
-        self.engine = create_engine(settings.db_url)
-        self.session_maker = orm.sessionmaker(bind=self.engine)
+    integrity_error = IntegrityError
+    engine = engine
+    session_maker = session_maker
 
     @staticmethod
     @lru_cache
-    def start_mapping(*tables_to_map: tuple[Type[DomainModel], DB_Table]) -> None:
-        for pair in tables_to_map:
-            table_mapper.map_imperatively(class_=pair[0], local_table=pair[1])
+    def start_mapping():
+        table_mapper.map_imperatively(class_=URLShortened, local_table=url_shortened)
 
-    def create_tables(self) -> None:
+    def create_tables(self):
         table_mapper.metadata.create_all(bind=self.engine)
 
-    def drop_tables(self) -> None:
+    def drop_tables(self):
         table_mapper.metadata.drop_all(bind=self.engine)
 
 
