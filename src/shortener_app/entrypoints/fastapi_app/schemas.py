@@ -1,5 +1,5 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, HttpUrl
 
 
 class URL(BaseModel):
-    url: str
+    url: HttpUrl
