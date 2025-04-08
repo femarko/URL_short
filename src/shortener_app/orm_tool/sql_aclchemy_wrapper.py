@@ -16,7 +16,7 @@ url_shortened = Table(
     "url_shortened",
     table_mapper.metadata,
     Column("id", Integer, primary_key=True, autoincrement=True),
-    Column("original_url", String(500), nullable=False),
+    Column("original_url", String(500), nullable=False, unique=True),
     Column("short_url", String(35), nullable=False),
     Column("save_date", DateTime, server_default=func.now(), nullable=False)
 )

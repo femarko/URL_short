@@ -10,11 +10,14 @@ def cut_url(original_url: str) -> str:
 
 
 def save_urls(original_url: str, short_url: str, uow: UnitOfWork) -> int:
-    with uow:
-        urls_instance = URLShortened(original_url=original_url, short_url=short_url)
-        uow.url_repo.add(urls_instance)
-        uow.commit()
-        urls_instance_id: int = urls_instance.id
+    try:
+        with uow:
+            urls_instance = URLShortened(original_url=original_url, short_url=short_url)
+            uow.url_repo.add(urls_instance)
+            uow.commit()
+            urls_instance_id: int = urls_instance.id
+    except domain_errors.AlreadyExistsError:
+        urls_instance_id = uow.url_repo.find(original_url=original_url).id
     return urls_instance_id
 
 
@@ -33,9 +36,3 @@ def delete_url(urls_instance_id: int, uow: UnitOfWork) -> dict[str, str | int]:
         uow.url_repo.delete(urls_instance_to_delete)
         uow.commit()
     return deleted_urls_params
-
-
-def cut_url_and_save(original_url: str, uow: UnitOfWork) -> dict[str, str | int]:
-    short_url = cut_url(original_url=original_url)
-    urls_instance_id = save_urls(original_url=original_url, short_url=short_url, uow=uow)
-    return {"id": urls_instance_id, "short_url": short_url}

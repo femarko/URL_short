@@ -16,6 +16,9 @@ class RepoProto(Protocol):
     def delete(self, instance) -> None:
         pass
 
+    def find(self, **kwargs) -> Any:
+        pass
+
 
 class Repository:
     def __init__(self, session):
@@ -27,6 +30,9 @@ class Repository:
 
     def get(self, instance_id: int) -> Any:
         return self.session.get(self.model_cl, instance_id)
+
+    def find(self, **kwargs) -> Any:
+        return self.session.query(self.model_cl).filter_by(**kwargs).first()
 
     def delete(self, instance) -> None:
         self.session.delete(instance)
