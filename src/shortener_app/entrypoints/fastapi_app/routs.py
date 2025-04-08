@@ -18,7 +18,7 @@ def cut_url(original_url: URL) -> dict[str, int | str]:
 
 
 @url_shotter_routs.get(
-    "/{shorten_url_id}", responses={307: {"description": f"Temporary redirect to the original url"}}
+    path="/{shorten_url_id}", responses={307: {"description": f"Temporary redirect to the original url"}}
 )
 def get_original_url(shorten_url_id: int) -> RedirectResponse:
     original_url = app_manager.get_original_url(
