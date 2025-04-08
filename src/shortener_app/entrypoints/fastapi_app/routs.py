@@ -15,7 +15,7 @@ url_shotter_routs = APIRouter()
 @url_shotter_routs.post("/", status_code=201)
 def cut_url(original_url: URL) -> dict[str, int | str]:
     return app_manager.cut_url_and_save(
-        original_url=cast(original_url.url, str), uow=unit_of_work.UnitOfWork(session_maker=orm_conf.session_maker)
+        original_url=str(original_url.url), uow=unit_of_work.UnitOfWork(session_maker=orm_conf.session_maker)
     )
 
 
