@@ -1,5 +1,11 @@
-from typing import Any, Protocol
+from datetime import datetime
+from typing import Any, Protocol, Optional, cast, Type, Coroutine
+from sqlalchemy import select
+
 from src.shortener_app.domain.models import URLShortened
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.shortener_app.domain.models import DomainModel
 
 
 class NotFoundError(Exception):
@@ -7,38 +13,34 @@ class NotFoundError(Exception):
 
 
 class RepoProto(Protocol):
-    def add(self, instance) -> None:
-        pass
+    async def add(self, instance) -> None: ...
+    async def get(self, instance_id: int) -> DomainModel | None: ...
+    async def find(self, **kwargs) -> DomainModel | None: ...
+    async def delete(self, instance) -> None: ...
 
-    def get(self, instance_id: int) -> Any:
-        pass
-
-    def delete(self, instance) -> None:
-        pass
-
-    def find(self, **kwargs) -> Any:
-        pass
 
 
 class Repository:
-    def __init__(self, session):
+    def __init__(self, session: AsyncSession):
         self.session = session
-        self.model_cl = None
+        self.model_cl: Optional[Type[DomainModel]] = None
 
-    def add(self, instance) -> None:
+    async def add(self, instance) -> None:
         self.session.add(instance)
 
-    def get(self, instance_id: int) -> Any:
-        return self.session.get(self.model_cl, instance_id)
+    async def get(self, instance_id: int) -> DomainModel | None:
+        return await self.session.get(self.model_cl, instance_id)
 
-    def find(self, **kwargs) -> Any:
-        return self.session.query(self.model_cl).filter_by(**kwargs).first()
+    async def find(self, **kwargs) -> DomainModel | None:
+        stmt = select(self.model_cl).filter_by(**kwargs)
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none()
 
-    def delete(self, instance) -> None:
-        self.session.delete(instance)
+    async def delete(self, instance) -> None:
+        await self.session.delete(instance)
 
 
 class URLRepository(Repository):
-    def __init__(self, session):
+    def __init__(self, session: AsyncSession):
         super().__init__(session=session)
         self.model_cl = URLShortened
