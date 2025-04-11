@@ -29,3 +29,9 @@ class UnitOfWork:
             await self.session.commit()
         except orm_conf.integrity_error:
             raise domain_errors.AlreadyExistsError
+
+    async def flush(self):
+        try:
+            await self.session.flush()
+        except orm_conf.integrity_error:
+            raise domain_errors.AlreadyExistsError
