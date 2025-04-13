@@ -14,24 +14,28 @@ def cut_url(original_url: str) -> str:
     return short_url
 
 
-async def save_urls(original_url: str, short_url: str, uow: UnitOfWork) -> int:
+async def save_urls(original_url: str, short_url: str, uow: UnitOfWork) -> tuple[int, bool]:
     try:
         async with uow:
             urls_instance = URLShortened(original_url=original_url, short_url=short_url)
             await uow.url_repo.add(urls_instance)
             await uow.flush()
-            urls_instance_id: int = urls_instance.id
+            new_urls_instance_id: int = urls_instance.id
             await uow.commit()
-            return urls_instance_id
+            return new_urls_instance_id, True
     except domain_errors.AlreadyExistsError:
         async with uow:
-            urls_instance = await uow.url_repo.find(original_url=original_url)
-            return urls_instance.id
+            urls_instance = await uow.url_repo.find(dict(original_url=original_url))
+            old_urls_instance_id: int = urls_instance.id
+            return old_urls_instance_id, False
 
 
 async def get_original_url(urls_instance_id: int, uow: UnitOfWork) -> str:
     async with uow:
-        result: URLShortened = await uow.url_repo.get(instance_id=urls_instance_id)
+        try:
+            result: URLShortened = await uow.url_repo.get(instance_id=urls_instance_id)
+        except Exception as e:
+            raise domain_errors.UnexpectedError(message=str(e))
         if not result:
             raise domain_errors.NotFoundError(message_prefix="The url")
         return result.original_url
