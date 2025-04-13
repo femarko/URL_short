@@ -1,46 +1,45 @@
-from datetime import datetime
-from typing import Any, Protocol, Optional, cast, Type, Coroutine
+from typing import Any, Protocol, TypeVar, Generic
 from sqlalchemy import select
 
 from src.shortener_app.domain.models import URLShortened
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.shortener_app.domain.models import DomainModel
+from src.shortener_app.orm_tool.sql_aclchemy_wrapper import orm_conf
 
 
 class NotFoundError(Exception):
     pass
 
 
-class RepoProto(Protocol):
-    async def add(self, instance) -> None: ...
-    async def get(self, instance_id: int) -> DomainModel | None: ...
-    async def find(self, **kwargs) -> DomainModel | None: ...
-    async def delete(self, instance) -> None: ...
+T = TypeVar("T")
 
 
+class RepoProto(Protocol[T]):
+    async def add(self, instance: T) -> None: ...
+    async def get(self, instance_id: int) -> T | None: ...
+    async def find(self, **kwargs: dict[str, Any]) -> T | None: ...
+    async def delete(self, instance: T) -> None: ...
 
-class Repository:
-    def __init__(self, session: AsyncSession):
+
+class Repository(Generic[T], RepoProto[T]):
+    def __init__(self, session: orm_conf.asyncsession, model_cl: type[T]):
         self.session = session
-        self.model_cl: Optional[Type[DomainModel]] = None
+        self.model_cl = model_cl
 
-    async def add(self, instance) -> None:
+    async def add(self, instance: T) -> None:
         self.session.add(instance)
 
-    async def get(self, instance_id: int) -> DomainModel | None:
+    async def get(self, instance_id: int) -> T | None:
         return await self.session.get(self.model_cl, instance_id)
 
-    async def find(self, **kwargs) -> DomainModel | None:
-        stmt = select(self.model_cl).filter_by(**kwargs)
+    async def find(self, **kwargs: dict[str, Any]) -> T | None:  # type: ignore
+        stmt = select(self.model_cl).filter_by()
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
 
-    async def delete(self, instance) -> None:
+    async def delete(self, instance: T) -> None:
         await self.session.delete(instance)
 
 
-class URLRepository(Repository):
-    def __init__(self, session: AsyncSession):
-        super().__init__(session=session)
-        self.model_cl = URLShortened
+class URLRepository(Repository[URLShortened]):
+    def __init__(self, session: orm_conf.asyncsession):
+        super().__init__(session=session, model_cl=URLShortened)
