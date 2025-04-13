@@ -1,13 +1,12 @@
-from typing import Any, Protocol, TypeVar, Generic
+from typing import Any, Protocol, TypeVar, Generic, Mapping, Optional, ParamSpec
+from datetime import datetime
 from sqlalchemy import select
+from typing_extensions import TypedDict, Unpack
 
-from src.shortener_app.domain.models import URLShortened
+from src.shortener_app.domain.models import URLShortened, URLShortenedDict, DomainModelBase
+from src.shortener_app.domain import errors as domain_errors
 
 from src.shortener_app.orm_tool.sql_aclchemy_wrapper import orm_conf
-
-
-class NotFoundError(Exception):
-    pass
 
 
 T = TypeVar("T")
@@ -16,7 +15,7 @@ T = TypeVar("T")
 class RepoProto(Protocol[T]):
     async def add(self, instance: T) -> None: ...
     async def get(self, instance_id: int) -> T | None: ...
-    async def find(self, **kwargs: dict[str, Any]) -> T | None: ...
+    async def find(self, **kwargs: Unpack[dict[str, Any]]) -> T | None: ...
     async def delete(self, instance: T) -> None: ...
 
 
@@ -26,18 +25,30 @@ class Repository(Generic[T], RepoProto[T]):
         self.model_cl = model_cl
 
     async def add(self, instance: T) -> None:
-        self.session.add(instance)
+        try:
+            self.session.add(instance)
+        except orm_conf.db_error as e:
+            raise domain_errors.DBError(message=str(e))
 
     async def get(self, instance_id: int) -> T | None:
-        return await self.session.get(self.model_cl, instance_id)
+        try:
+            return await self.session.get(self.model_cl, instance_id)
+        except orm_conf.db_error as e:
+            raise domain_errors.DBError(message=str(e))
 
-    async def find(self, **kwargs: dict[str, Any]) -> T | None:  # type: ignore
+    async def find(self, **kwargs: Unpack[URLShortenedDict]) -> T | None:  # type: ignore
         stmt = select(self.model_cl).filter_by()
-        result = await self.session.execute(stmt)
-        return result.scalar_one_or_none()
+        try:
+            result = await self.session.execute(stmt)
+            return result.scalar_one_or_none()
+        except orm_conf.db_error as e:
+            raise domain_errors.DBError(message=str(e))
 
     async def delete(self, instance: T) -> None:
-        await self.session.delete(instance)
+        try:
+            await self.session.delete(instance)
+        except orm_conf.db_error as e:
+            raise domain_errors.DBError(message=str(e))
 
 
 class URLRepository(Repository[URLShortened]):

@@ -1,5 +1,6 @@
 from datetime import datetime
-from typing import Optional, TypeVar
+from typing import Optional, TypeVar, NotRequired
+from typing_extensions import TypedDict
 
 
 class DomainModelBase:
@@ -27,3 +28,10 @@ class URLShortened(DomainModelBase):
             "short_url": self.short_url,
             "save_date": self.save_date
         }
+
+
+class URLShortenedDict(TypedDict, total=False):
+    id: int
+    original_url: str
+    short_url: str
+    save_date: datetime
