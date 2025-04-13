@@ -1,13 +1,17 @@
 import dataclasses
+from typing import Type
 
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy import orm, Table, Column, Integer, String,DateTime, func
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from functools import lru_cache
 
 from src.shortener_app.domain.models import URLShortened
 from src.config import settings
 
+
+AsyncSessionType = Type[AsyncSession]
 
 engine = create_async_engine(settings.db_url)
 session_maker = async_sessionmaker(bind=engine)
@@ -28,6 +32,8 @@ class ORMConf:
     integrity_error = IntegrityError
     engine = engine
     session_maker = session_maker
+    db_error = SQLAlchemyError
+    asyncsession: AsyncSessionType = AsyncSession
 
     @staticmethod
     @lru_cache
