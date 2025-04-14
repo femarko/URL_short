@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Response
-
 from fastapi.responses import RedirectResponse, JSONResponse
 
 import src.shortener_app.entrypoints.fastapi_app.schemas as schemas
@@ -17,12 +16,12 @@ url_shotter_routs = APIRouter()
     path="/",
     status_code=201,
     response_model=schemas.CutUrlSuccess,
-    summary="Shorten a url and save it in the database if it is not already exists.",
+    summary="Shorten the URL and save it in the database if it does not already exist.",
     tags=["Shorten url"],
     responses={
         200: {
             "model": schemas.CutUrlSuccess,
-            "description": "A shortened url is created and returned, but not saved, because it is already exists in"
+            "description": "A shortened url is created and returned, but not saved, because it already exists in"
                            " the database."
         },
         201: {"model": schemas.CutUrlSuccess, "description": "A shortened url is created and saved in the database."},
@@ -49,7 +48,7 @@ async def cut_url(original_url: schemas.URL, response: Response) -> schemas.CutU
     path="/{shorten_url_id}",
     status_code=307,
     response_model=None,
-    summary="Accepts the entry ID as a path parameter and redirects to the address set by original URL.",
+    summary="Accepts the entry ID as a path parameter and redirects to the address set by the original URL.",
     tags=["Redirect by ID"],
     responses={
         404: {"model": schemas.Failure, "description": "URL not found."},

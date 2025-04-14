@@ -3,7 +3,7 @@ from typing import Type
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from sqlalchemy import orm, Table, Column, Integer, String,DateTime, func
+from sqlalchemy import orm, Table, Column, Integer, String,DateTime, func, select
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from functools import lru_cache
 
@@ -57,6 +57,9 @@ class ORMConf:
             print("Database reset.")
         except Exception as e:
             print(f"Error during DB reset: {str(e)}")
+
+    def sqlalch_select(self, *args, **kwargs):
+        return select(*args, **kwargs)
 
 
 orm_conf = ORMConf()

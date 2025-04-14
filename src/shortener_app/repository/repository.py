@@ -1,12 +1,11 @@
-from typing import Any, Protocol, TypeVar, Generic, Mapping, Optional, ParamSpec
-from datetime import datetime
-from sqlalchemy import select
-from typing_extensions import TypedDict, Unpack
+from typing import Any, Protocol, TypeVar, Generic
+from typing_extensions import Unpack
 
 from src.shortener_app.domain.models import URLShortened, URLShortenedDict, DomainModelBase
 from src.shortener_app.domain import errors as domain_errors
-
 from src.shortener_app.orm_tool.sql_aclchemy_wrapper import orm_conf
+
+
 
 
 T = TypeVar("T")
@@ -37,7 +36,7 @@ class Repository(Generic[T], RepoProto[T]):
             raise domain_errors.DBError(message=str(e))
 
     async def find(self, **kwargs: Unpack[URLShortenedDict]) -> T | None:  # type: ignore
-        stmt = select(self.model_cl).filter_by()
+        stmt = orm_conf.sqlalch_select(self.model_cl).filter_by(**kwargs)
         try:
             result = await self.session.execute(stmt)
             return result.scalar_one_or_none()

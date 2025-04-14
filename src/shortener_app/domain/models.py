@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, TypeVar, NotRequired
+from typing import Optional, TypeVar
 from typing_extensions import TypedDict
 
 
