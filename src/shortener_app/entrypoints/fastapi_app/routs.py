@@ -39,7 +39,7 @@ async def cut_url(original_url: schemas.URL, response: Response) -> schemas.CutU
         if not is_saved_to_db:
             response.status_code = 200
         return schemas.CutUrlSuccess(id=urls_instance_id, short_url=short_url)
-    except domain_errors.UnexpectedError as e:
+    except (domain_errors.UnexpectedError, domain_errors.DBError) as e:
         error = schemas.CutUrlFailure(message=e.message, original_url=str(original_url.url))
         return JSONResponse(content=error.model_dump(), status_code=500)
 
@@ -61,7 +61,7 @@ async def get_original_url(shorten_url_id: int) -> RedirectResponse | JSONRespon
             urls_instance_id=shorten_url_id, uow=UnitOfWork(session_maker=orm_conf.session_maker)
         )
         return RedirectResponse(url=original_url, status_code=307)
-    except domain_errors.NotFoundError as e:
+    except (domain_errors.NotFoundError, domain_errors.DBError) as e:
         error = schemas.Failure(message=e.message)
         return JSONResponse(content=error.model_dump(), status_code=404)
     except domain_errors.UnexpectedError as e:
