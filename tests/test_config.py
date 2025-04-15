@@ -11,7 +11,7 @@ def test_settings_with_test_mode():
     settings = Config(mode=fake_mode)
     envfile_values = dotenv_values(f'{ROOT}/.env.{fake_mode}')
     assert settings.mode == fake_mode
-    assert settings.db_url == f"sqlite:///{TEST_DB}"
+    assert settings.db_url == f"sqlite+aiosqlite:///{TEST_DB}"
     assert settings.env_file == envfile_values.get("ENV_FILE")
 
 
@@ -19,7 +19,7 @@ def test_settings_with_test_mode():
 def test_settings_with_non_test_mode(fake_mode):
     settings = Config(mode=fake_mode)
     envfile_values = dotenv_values(f'{ROOT}/.env.{fake_mode}')
-    assert settings.db_url == (f"postgresql://{envfile_values.get('POSTGRES_USER')}:"
+    assert settings.db_url == (f"postgresql+asyncpg://{envfile_values.get('POSTGRES_USER')}:"
                                f"{envfile_values.get('POSTGRES_PASSWORD')}@"
                                f"{envfile_values.get('POSTGRES_HOST')}:"
                                f"{envfile_values.get('POSTGRES_PORT')}/"
