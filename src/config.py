@@ -15,9 +15,6 @@ class Config:
         self.mode = mode
         self.vals = dotenv_values(f'{ROOT}/.env.{mode}')
         self.env_file = self.vals.get("ENV_FILE")
-        # if mode == "test":
-        #     self.db_url = str(f"sqlite+aiosqlite:///{TEST_DB}")
-        # else:
         self.db_url = (f"postgresql+asyncpg://"
                 f"{self.vals.get('POSTGRES_USER')}:"
                 f"{self.vals.get('POSTGRES_PASSWORD')}@"
