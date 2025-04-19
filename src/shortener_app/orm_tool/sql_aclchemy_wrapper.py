@@ -1,19 +1,12 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Type, Any, Iterable, get_args, Optional
-
-from sqlalchemy.ext.asyncio import AsyncSession, AsyncEngine
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, AsyncEngine, create_async_engine, async_sessionmaker
 from sqlalchemy import orm, Table, Column, Integer, String,DateTime, func, select
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from functools import lru_cache
-
-from typing_extensions import Unpack
 
 from src.shortener_app.domain.models import URLShortened, DomainModel
-import src.shortener_app.domain.errors as domain_errors
 from src.config import settings
-
 
 
 AsyncSessionType = Type[AsyncSession]
@@ -60,7 +53,6 @@ class ORMConf:
                 pass
         self.mappings |= {domain: Table(domain.__name__.lower(), self.table_mapper.metadata, *columns)}
 
-    #@lru_cache
     def start_mapping(self):
         if self._mapping_started:
             return
@@ -90,7 +82,8 @@ class ORMConf:
         except Exception as e:
             print(f"Error during {settings.mode} database reset: {str(e)}")
 
-    def sqlalch_select(self, *args, **kwargs):
+    @staticmethod
+    def sqlalch_select(*args, **kwargs):
         return select(*args, **kwargs)
 
 
