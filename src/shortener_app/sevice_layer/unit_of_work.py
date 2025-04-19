@@ -6,7 +6,7 @@ from src.shortener_app.repository.repository import URLRepository, RepoProto
 
 
 class UnitOfWork:
-    def __init__(self, session_maker: Callable[..., orm_conf.asyncsession] = orm_conf.session_maker):
+    def __init__(self, session_maker: Callable = orm_conf.session_maker):
         self.session_maker = session_maker
 
     async def __aenter__(self) -> "UnitOfWork":

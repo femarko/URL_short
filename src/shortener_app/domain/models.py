@@ -1,5 +1,6 @@
+from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional, TypeVar
+from typing import Optional, TypeVar, Annotated
 from typing_extensions import TypedDict
 
 
@@ -10,16 +11,12 @@ class DomainModelBase:
 DomainModel = TypeVar("DomainModel", bound=DomainModelBase)
 
 
+@dataclass
 class URLShortened(DomainModelBase):
-    def __init__(self,
-                 original_url: str,
-                 short_url: str,
-                 id: Optional[int] = None,
-                 save_date: Optional[datetime] = None):
-        self.id = id
-        self.original_url = original_url
-        self.short_url = short_url
-        self.save_date = save_date
+    original_url: Annotated[str, {"nullable": False}, {"unique": True}]  # type: ignore
+    short_url: Annotated[str, {"nullable": False}]  # type: ignore
+    id: Annotated[Optional[int], {"primary_key": True}, {"autoincrement": True}] = None  # type: ignore
+    save_date: Annotated[Optional[datetime], {"nullable": False}, {"server_default": datetime.now}] = None #type: ignore
 
     def get_params(self):
         return {

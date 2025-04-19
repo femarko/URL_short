@@ -1,7 +1,6 @@
 from sqlalchemy import text
 
-from src.shortener_app.domain import models
-from src.shortener_app.orm_tool.sql_aclchemy_wrapper import orm_conf, table_mapper
+from src.shortener_app.orm_tool.sql_aclchemy_wrapper import orm_conf
 
 
 async def test_create_table():

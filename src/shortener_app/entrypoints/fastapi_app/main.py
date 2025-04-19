@@ -5,7 +5,6 @@ from src.shortener_app.orm_tool.sql_aclchemy_wrapper import orm_conf
 from src.config import settings
 from src.shortener_app.entrypoints.fastapi_app.routs import url_shotter_routs
 
-
 app = FastAPI(dependencies=[Depends(orm_conf.start_mapping)])
 app.include_router(url_shotter_routs)
 

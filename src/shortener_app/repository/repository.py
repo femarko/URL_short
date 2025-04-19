@@ -6,8 +6,6 @@ from src.shortener_app.domain import errors as domain_errors
 from src.shortener_app.orm_tool.sql_aclchemy_wrapper import orm_conf
 
 
-
-
 T = TypeVar("T")
 
 
@@ -19,7 +17,7 @@ class RepoProto(Protocol[T]):
 
 
 class Repository(Generic[T], RepoProto[T]):
-    def __init__(self, session: orm_conf.asyncsession, model_cl: type[T]):
+    def __init__(self, session, model_cl: type[T]):
         self.session = session
         self.model_cl = model_cl
 
@@ -51,5 +49,5 @@ class Repository(Generic[T], RepoProto[T]):
 
 
 class URLRepository(Repository[URLShortened]):
-    def __init__(self, session: orm_conf.asyncsession):
+    def __init__(self, session):
         super().__init__(session=session, model_cl=URLShortened)
