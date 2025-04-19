@@ -6,6 +6,7 @@ from sqlalchemy import orm, Table, Column, Integer, String,DateTime, func, selec
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 from src.shortener_app.domain.models import URLShortened, DomainModel
+from src.shortener_app.domain import errors as domain_errors
 from src.config import settings
 
 
@@ -37,39 +38,48 @@ class ORMConf:
         self.values_mapping = {datetime.now: func.now()}
         self._mapping_started = False
 
-    def _init_table(self, domain: Type[DomainModel]):
-        columns = []
-        for column_name, annotated_type in domain.__annotations__.items():
-            column_type, *kwargs_list = get_args(annotated_type)
-            optional_params = {}
-            for item in kwargs_list:
-                for key, value in item.items():
-                    optional_params |= {key: self.values_mapping.get(value, value)}
-            columns.append(Column(column_name, self.types_mapping[column_type], **(optional_params or {})))
-            first_column = filter(lambda column: column.primary_key, columns)
-            try:
-                columns = [columns.pop(columns.index(next(first_column))), *columns]
-            except StopIteration:
-                pass
-        self.mappings |= {domain: Table(domain.__name__.lower(), self.table_mapper.metadata, *columns)}
+    def _init_table(self):
+        for model in self.domain_models:
+            columns = []
+            for column_name, annotated_type in model.__annotations__.items():
+                column_type, *kwargs_list = get_args(annotated_type)
+                optional_params = {}
+                for item in kwargs_list:
+                    for key, value in item.items():
+                        optional_params |= {key: self.values_mapping.get(value, value)}
+                columns.append(Column(column_name, self.types_mapping[column_type], **(optional_params or {})))
+                first_column = filter(lambda column: column.primary_key, columns)
+                try:
+                    columns = [columns.pop(columns.index(next(first_column))), *columns]
+                except StopIteration:
+                    pass
+            self.mappings |= {model: Table(model.__name__.lower(),
+                                           self.table_mapper.metadata,
+                                           *columns,
+                                           extend_existing=True)}
 
     def start_mapping(self):
         if self._mapping_started:
             return
-        for domain in self.domain_models:
-            self._init_table(domain)
-        for domain, table in self.mappings.items():
-            self.table_mapper.map_imperatively(class_=domain, local_table=table)
+        self._init_table()
+        if not self.mappings:
+            raise domain_errors.DBError(message="No mappings provided.")
+        for model, table in self.mappings.items():
+            self.table_mapper.map_imperatively(class_=model, local_table=table)
         self._mapping_started = True
 
     async def create_tables(self):
+        self._init_table()
         if not self.mappings:
-            raise ValueError("No mappings provided.")
+            raise domain_errors.DBError(message="No mappings provided.")
         async with self.engine.begin() as conn:
             await conn.run_sync(self.table_mapper.metadata.create_all)
         print(f"Tables created in the {settings.mode} database.")
 
     async def drop_tables(self):
+        self._init_table()
+        if not self.mappings:
+            raise domain_errors.DBError("No mappings provided.")
         async with self.engine.begin() as conn:
             await conn.run_sync(self.table_mapper.metadata.drop_all)
         print(f"Tables dropped in the {settings.mode} database.")
@@ -80,7 +90,7 @@ class ORMConf:
             await self.create_tables()
             print(f"The {settings.mode} database has been reset.")
         except Exception as e:
-            print(f"Error during {settings.mode} database reset: {str(e)}")
+            raise domain_errors.DBError(message=f"Error during {settings.mode} database reset: {str(e)}")
 
     @staticmethod
     def sqlalch_select(*args, **kwargs):
