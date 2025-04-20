@@ -18,14 +18,6 @@ class URLShortened(DomainModelBase):
     id: Annotated[Optional[int], {"primary_key": True}, {"autoincrement": True}] = None  # type: ignore
     save_date: Annotated[Optional[datetime], {"nullable": False}, {"server_default": datetime.now}] = None #type: ignore
 
-    def get_params(self):
-        return {
-            "id": self.id,
-            "original_url": self.original_url,
-            "short_url": self.short_url,
-            "save_date": self.save_date
-        }
-
 
 class URLShortenedDict(TypedDict, total=False):
     id: int

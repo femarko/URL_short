@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, AsyncEngine, create_async_engin
 from sqlalchemy import orm, Table, Column, Integer, String,DateTime, func, select
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
-from src.shortener_app.domain.models import URLShortened, DomainModel
+from src.shortener_app.domain.models import DomainModel
 from src.shortener_app.domain import errors as domain_errors
 from src.config import settings
 

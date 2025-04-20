@@ -1,19 +1,11 @@
-# import asyncio
-# import pytest
-import asyncio
-
-import pytest
 import pytest_asyncio
-
-# from sqlalchemy.orm import clear_mappers
-# from fastapi.testclient import TestClient
 from httpx import AsyncClient, ASGITransport
 
 from src.config import settings
 from src.shortener_app.domain.models import URLShortened
 from src.shortener_app.orm_tool.sql_aclchemy_wrapper import get_orm_tool
 from src.shortener_app.entrypoints.fastapi_app.init_app import create_app
-# from src.shortener_app.entrypoints.fastapi_app.main import app
+
 
 @pytest_asyncio.fixture
 def orm_test_tool():
@@ -33,18 +25,6 @@ async def reset_db_fixture(orm_test_tool):
     await orm_test_tool.reset_db()
     yield
     await orm_test_tool.drop_tables()
-
-
-# @pytest_asyncio.fixture
-# async def client():
-#     client = TestClient(app)
-#     return client
-
-
-# @pytest.fixture(autouse=True, scope="session")
-# def configure_asyncio_mode():
-#     policy = asyncio.get_event_loop_policy()
-#     asyncio.set_event_loop_policy(policy)
 
 
 @pytest_asyncio.fixture

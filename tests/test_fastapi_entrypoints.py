@@ -1,8 +1,5 @@
 import pytest
-from fastapi.testclient import TestClient
 
-# from src.shortener_app.entrypoints.fastapi_app.main import app
-from src.shortener_app.domain.models import URLShortened
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_cut_url(async_client, reset_db_fixture):
@@ -17,6 +14,7 @@ async def test_cut_url(async_client, reset_db_fixture):
     assert "id" in response_json_1
     assert isinstance(response_json_1["id"], int)
     assert response_2.json() == response_json_1
+
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_get_original_url(async_client, reset_db_fixture):
