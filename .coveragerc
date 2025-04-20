@@ -1,0 +1,16 @@
+[run]
+omit=
+    *.pytest_cache/*
+    */tests/*
+    *.venv_url_short/*
+    .env*
+    .gitignore
+    .dockerignore
+    Dockerfile
+    docker-compose*
+    pytest.ini
+    client.py
+    README.md
+    requirements.txt
+    test.db
+    *__init__.py
