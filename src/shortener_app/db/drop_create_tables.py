@@ -1,5 +1,6 @@
 import asyncio
-from src.shortener_app.orm_tool.sql_aclchemy_wrapper import orm_conf
+
+from src.shortener_app.orm_tool.init_orm_tool import orm_tool
 
 
-asyncio.run(orm_conf.reset_db())
+asyncio.run(orm_tool.reset_db())

@@ -14,7 +14,7 @@ AsyncSessionType = Type[AsyncSession]
 
 
 @dataclass
-class ORMConf:
+class ORMTool:
     db_url: str
     domain_models: Iterable[Type[DomainModel]]
     engine: AsyncEngine = field(init=False)
@@ -93,8 +93,13 @@ class ORMConf:
             raise domain_errors.DBError(message=f"Error during {settings.mode} database reset: {str(e)}")
 
     @staticmethod
+    def clear_table_mappers():
+        orm.clear_mappers()
+
+    @staticmethod
     def sqlalch_select(*args, **kwargs):
         return select(*args, **kwargs)
 
 
-orm_conf = ORMConf(db_url=settings.db_url, domain_models=(URLShortened,))
+def get_orm_tool(domain_models: Iterable[Type[DomainModel]], db_url: str = settings.db_url) -> ORMTool:
+    return ORMTool(db_url=db_url, domain_models=domain_models)

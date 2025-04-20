@@ -4,7 +4,6 @@ from sqlalchemy import text
 
 from src.shortener_app.domain.models import URLShortened
 from src.shortener_app.repository.repository import URLRepository
-from src.shortener_app.orm_tool.sql_aclchemy_wrapper import orm_conf
 
 
 async def test_repository_can_save_the_urls(reset_db_fixture):

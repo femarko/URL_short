@@ -5,7 +5,7 @@ import src.shortener_app.entrypoints.fastapi_app.schemas as schemas
 
 from src.shortener_app.sevice_layer import app_manager
 from src.shortener_app.sevice_layer.unit_of_work import UnitOfWork
-from src.shortener_app.orm_tool.sql_aclchemy_wrapper import orm_conf
+from src.shortener_app.orm_tool.init_orm_tool import orm_tool
 from src.shortener_app.domain import errors as domain_errors
 
 
@@ -34,7 +34,7 @@ async def cut_url(original_url: schemas.URL, response: Response) -> schemas.CutU
         urls_instance_id, is_saved_to_db = await app_manager.save_urls(
             original_url=str(original_url.url),
             short_url=short_url,
-            uow=UnitOfWork(session_maker=orm_conf.session_maker)
+            uow=UnitOfWork(session_maker=orm_tool.session_maker)
         )
         if not is_saved_to_db:
             response.status_code = 200
@@ -58,7 +58,7 @@ async def cut_url(original_url: schemas.URL, response: Response) -> schemas.CutU
 async def get_original_url(shorten_url_id: int) -> RedirectResponse | JSONResponse:
     try:
         original_url = await app_manager.get_original_url(
-            urls_instance_id=shorten_url_id, uow=UnitOfWork(session_maker=orm_conf.session_maker)
+            urls_instance_id=shorten_url_id, uow=UnitOfWork(session_maker=orm_tool.session_maker)
         )
         return RedirectResponse(url=original_url, status_code=307)
     except (domain_errors.NotFoundError, domain_errors.DBError) as e:
