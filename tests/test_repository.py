@@ -1,5 +1,5 @@
 import pytest
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import text
 
 from src.shortener_app.domain.models import URLShortened
@@ -21,7 +21,7 @@ async def test_repository_can_save_the_urls(reset_db_fixture, orm_test_tool):
     assert data_from_db[0] == 1
     assert data_from_db[1] == "fake_original_url"
     assert data_from_db[2] == "fake_short_url"
-    assert (data_from_db[3]).isoformat().startswith(str(datetime.date(datetime.now())))
+    assert (data_from_db[3]).isoformat().startswith(str(datetime.date(datetime.now(timezone.utc))))
 
 
 @pytest.mark.asyncio(loop_scope="session")
@@ -37,7 +37,7 @@ async def test_repository_can_get_the_urls(reset_db_fixture, orm_test_tool):
     assert result.id == 1
     assert result.original_url == "fake_original_url"
     assert result.short_url == "fake_short_url"
-    assert result.save_date.date() == datetime.date(datetime.now())
+    assert result.save_date.date() == datetime.date(datetime.now(timezone.utc))
 
 
 @pytest.mark.asyncio(loop_scope="session")

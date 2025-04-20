@@ -1,4 +1,3 @@
-import uvicorn
 from fastapi import FastAPI, Depends
 from typing import Optional
 
@@ -16,8 +15,3 @@ def create_app(orm_tool: Optional[ORMTool] = None) -> FastAPI:
     return app
 
 
-def run_app(app: FastAPI):
-    if settings.mode in {"test", "dev"}:
-        uvicorn.run(app=app, host="127.0.0.1", port=8080)
-    else:
-        uvicorn.run(app=app, host="0.0.0.0", port=8080)
