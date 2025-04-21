@@ -4,26 +4,27 @@ services:
 
   app:
     build: .
+    environment:
+      - MODE=${MODE}
     env_file:
-      - .env.dev
+      - .env
     command:
       - sh
       - -c
       - |
-        python3 -m src.shortener_app.db.drop_create_tables && 
-        python3 -m src.shortener_app.entrypoints.fastapi_app.main
+        echo "POSTGRES_HOST=${POSTGRES_HOST}, POSTGRES_PORT=${POSTGRES_PORT}" && 
+        python3 -m src.shortener_app.db.drop_create_tables &&  
+        python3 -m src.shortener_app.main
     depends_on:
       db:
         condition: service_healthy
-    ports:
-      - "8080:8080"
 
   db:
     image: postgres:14.3-alpine3.15
     env_file:
-      - .env.dev
+      - .env
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -33,9 +34,9 @@ services:
   test_db:
     image: postgres:14.3-alpine3.15
     env_file:
-      - .env.test
+      - .env
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 10s
       timeout: 5s
       retries: 5

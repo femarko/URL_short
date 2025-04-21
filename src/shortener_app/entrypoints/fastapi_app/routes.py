@@ -3,16 +3,16 @@ from fastapi.responses import RedirectResponse, JSONResponse
 
 import src.shortener_app.entrypoints.fastapi_app.schemas as schemas
 
-from src.shortener_app.sevice_layer import app_manager
-from src.shortener_app.sevice_layer.unit_of_work import UnitOfWork
+from src.shortener_app.service_layer import app_manager
+from src.shortener_app.service_layer.unit_of_work import UnitOfWork
 from src.shortener_app.orm_tool.init_orm_tool import orm_tool
 from src.shortener_app.domain import errors as domain_errors
 
 
-url_shotter_routs = APIRouter()
+url_shotter_routes = APIRouter()
 
 
-@url_shotter_routs.post(
+@url_shotter_routes.post(
     path="/",
     status_code=201,
     response_model=schemas.CutUrlSuccess,
@@ -44,7 +44,7 @@ async def cut_url(original_url: schemas.URL, response: Response) -> schemas.CutU
         return JSONResponse(content=error.model_dump(), status_code=500)
 
 
-@url_shotter_routs.get(
+@url_shotter_routes.get(
     path="/{shorten_url_id}",
     status_code=307,
     response_model=None,

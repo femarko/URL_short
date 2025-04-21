@@ -1,7 +1,7 @@
 import src.shortener_app.domain.services as domain_services
 import src.shortener_app.domain.errors as domain_errors
 
-from src.shortener_app.sevice_layer.unit_of_work import UnitOfWork
+from src.shortener_app.service_layer.unit_of_work import UnitOfWork
 from src.shortener_app.domain.models import URLShortened
 
 
