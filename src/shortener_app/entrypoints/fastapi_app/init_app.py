@@ -3,7 +3,7 @@ from typing import Optional
 
 from src.config import settings
 from src.shortener_app.entrypoints.fastapi_app.routes import url_shotter_routes
-from src.shortener_app.orm_tool.sql_aclchemy_wrapper import ORMTool
+from src.shortener_app.orm_tool.sql_alchemy_wrapper import ORMTool
 
 
 def create_app(orm_tool: Optional[ORMTool] = None) -> FastAPI:

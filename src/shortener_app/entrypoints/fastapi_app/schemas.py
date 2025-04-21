@@ -13,6 +13,7 @@ class CutUrlSuccess(BaseModel):
 class Failure(BaseModel):
     message: str
 
+
 class CutUrlFailure(Failure):
     original_url: str
 
