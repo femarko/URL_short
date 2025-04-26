@@ -5,10 +5,11 @@ import src.shortener_app.entrypoints.fastapi_app.schemas as schemas
 
 from src.shortener_app.service_layer import app_manager
 from src.shortener_app.service_layer.unit_of_work import UnitOfWork
-from src.shortener_app.orm_tool.init_orm_tool import orm_tool
+from src.shortener_app.orm_tool.init_orm_tool import get_inialized_orm_tool
 from src.shortener_app.domain import errors as domain_errors
 
 
+orm_tool = get_inialized_orm_tool()
 url_shotter_routes = APIRouter()
 
 

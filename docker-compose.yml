@@ -4,25 +4,36 @@ services:
 
   app:
     build: .
-    environment:
-      - MODE=${MODE}
     env_file:
       - .env
+    environment:
+      - POSTGRES_HOST
+      - POSTGRES_PORT
+      - MODE
     command:
       - sh
       - -c
       - |
-        echo "POSTGRES_HOST=${POSTGRES_HOST}, POSTGRES_PORT=${POSTGRES_PORT}" && 
-        python3 -m src.shortener_app.db.drop_create_tables &&  
-        python3 -m src.shortener_app.main
+        ls -R /app && python3 -m src.shortener_app.main
+        echo "POSTGRES_HOST=${POSTGRES_HOST}, POSTGRES_PORT=${POSTGRES_PORT}" &&
+        python3 -m src.shortener_app.db.drop_create_tables &&
+        python3 -m src.main
     depends_on:
-      db:
+      prod_db:
         condition: service_healthy
+      dev_db:
+        condition: service_healthy
+      test_db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
 
-  db:
+  prod_db:
     image: postgres:14.3-alpine3.15
     env_file:
       - .env
+    environment:
+      - POSTGRES_DB=prod_db
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 10s
@@ -30,17 +41,38 @@ services:
       retries: 5
       start_period: 30s
     restart: unless-stopped
+#    ports:
+#      - "5433:5432"
 
   test_db:
     image: postgres:14.3-alpine3.15
     env_file:
       - .env
+    environment:
+      - POSTGRES_DB=test_db
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
+#    ports:
+#      - "5436:5432"
+
+  dev_db:
+    image: postgres:14.3-alpine3.15
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=dev_db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    ports:
+      - "5435:5432"
 
   pg_admin:
     image: dpage/pgadmin4:latest

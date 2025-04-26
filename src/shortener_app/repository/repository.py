@@ -3,9 +3,10 @@ from typing_extensions import Unpack
 
 from src.shortener_app.domain.models import URLShortened, URLShortenedDict
 from src.shortener_app.domain import errors as domain_errors
-from src.shortener_app.orm_tool.init_orm_tool import orm_tool
+from src.shortener_app.orm_tool.init_orm_tool import get_inialized_orm_tool
 
 
+orm_tool = get_inialized_orm_tool()
 T = TypeVar("T")
 
 

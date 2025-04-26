@@ -1,6 +1,7 @@
 python-dotenv~=1.1.0
 typing_extensions~=4.13.1
 pyshorteners~=1.0.1
+asyncpg~=0.30.0
 SQLAlchemy~=2.0.40
 uvicorn~=0.34.0
 fastapi~=0.115.12
