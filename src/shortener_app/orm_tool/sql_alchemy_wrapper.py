@@ -25,7 +25,6 @@ class ORMTool:
     _mapping_started: bool = field(init=False, default=False)
 
     def __post_init__(self):
-        print(f"From __post_init__: {self.db_url = }")
         self.engine = create_async_engine(self.db_url)
         self.session_maker = async_sessionmaker(bind=self.engine)
         self.table_mapper = orm.registry()

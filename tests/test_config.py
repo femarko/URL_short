@@ -1,10 +1,6 @@
 import os
 
-import pytest
-from dotenv import dotenv_values
-
 from src.config import Config
-from path_definitions import ROOT
 
 
 def test_settings_with_test_mode():
