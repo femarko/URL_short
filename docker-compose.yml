@@ -3,7 +3,9 @@ version: "3.9"
 services:
 
   app:
-    build: .
+    build:
+      context: .
+      target: prod
     env_file:
       - .env
     environment:
@@ -14,19 +16,68 @@ services:
       - sh
       - -c
       - |
-        ls -R /app && python3 -m src.shortener_app.main
+        ls -R /app
         echo "POSTGRES_HOST=${POSTGRES_HOST}, POSTGRES_PORT=${POSTGRES_PORT}" &&
         python3 -m src.shortener_app.db.drop_create_tables &&
         python3 -m src.main
     depends_on:
       prod_db:
         condition: service_healthy
+#      dev_db:
+#        condition: service_healthy
+#      test_db:
+#        condition: service_healthy
+    ports:
+      - "8080:8080"
+
+  dev:
+    build:
+      context: .
+      target: dev
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST
+      - POSTGRES_PORT
+      - MODE=dev
+    command:
+      - sh
+      - -c
+      - |
+        ls -R /app
+        echo "POSTGRES_HOST=${POSTGRES_HOST}, POSTGRES_PORT=${POSTGRES_PORT}" &&
+        python3 -m src.shortener_app.db.drop_create_tables &&
+        python3 -m src.main
+    depends_on:
       dev_db:
-        condition: service_healthy
-      test_db:
         condition: service_healthy
     ports:
       - "8080:8080"
+    volumes:
+      - .:/app
+
+  test:
+    build:
+      context: .
+      target: test
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST
+      - POSTGRES_PORT
+      - MODE=test
+    command:
+      - sh
+      - -c
+      - |
+        ls -R /app
+        echo "POSTGRES_HOST=${POSTGRES_HOST}, POSTGRES_PORT=${POSTGRES_PORT}" &&
+        pytest -v
+    depends_on:
+      test_db:
+        condition: service_healthy
+    volumes:
+      - .:/app
 
   prod_db:
     image: postgres:14.3-alpine3.15
