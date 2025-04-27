@@ -16,7 +16,7 @@ services:
       - sh
       - -c
       - |
-        ls -R /app
+        ls src -R
         echo "POSTGRES_HOST=${POSTGRES_HOST}, POSTGRES_PORT=${POSTGRES_PORT}" &&
         python3 -m src.shortener_app.db.drop_create_tables &&
         python3 -m src.main
@@ -39,12 +39,12 @@ services:
     environment:
       - POSTGRES_HOST
       - POSTGRES_PORT
-      - MODE=dev
+      - MODE
     command:
       - sh
       - -c
       - |
-        ls -R /app
+        ls app/
         echo "POSTGRES_HOST=${POSTGRES_HOST}, POSTGRES_PORT=${POSTGRES_PORT}" &&
         python3 -m src.shortener_app.db.drop_create_tables &&
         python3 -m src.main
@@ -65,14 +65,13 @@ services:
     environment:
       - POSTGRES_HOST
       - POSTGRES_PORT
-      - MODE=test
+      - MODE
     command:
       - sh
       - -c
       - |
-        ls -R /app
         echo "POSTGRES_HOST=${POSTGRES_HOST}, POSTGRES_PORT=${POSTGRES_PORT}" &&
-        pytest -v
+        pytest --cov=src -v
     depends_on:
       test_db:
         condition: service_healthy
@@ -130,7 +129,9 @@ services:
     ports:
       - "5050:80"
     depends_on:
-      - db
+      - prod_db
+      - test_db
+      - dev_db
     deploy:
       resources:
         limits:

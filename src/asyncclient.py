@@ -20,5 +20,5 @@ async def get_original_url(base_url: str, url_id: int) -> tuple[int, dict[str, s
 
 
 if __name__ == "__main__":
-    print(asyncio.run(get_shortened_url("https://google.com", "http://localhost:8080")))
-    print(asyncio.run(get_original_url("http://localhost:8080", 3)))
+    print(asyncio.run(get_shortened_url("https://google.com", "http://0.0.0.0:8080")))
+    print(asyncio.run(get_original_url("http://0.0.0.0:8080", 3)))

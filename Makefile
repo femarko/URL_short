@@ -1,41 +1,34 @@
 MODE ?= prod
 
-up:
-	@echo "Starting in $(MODE) mode..."
-	cp .env.$(MODE) .env
-	@echo "--- .env content ---"
-	@cat .env
-	docker-compose up --build
-
 build-test:
-	@echo "Running tests in test mode..."
+	@echo "Building test mode..."
 	cp .env.test .env
-	docker-compose build test --no-cache
+	docker-compose build test_db test --no-cache
 
 test:
+	@echo "Running tests in test mode..."
+	cp .env.test .env
 	docker-compose run --rm test
 
 build-dev:
-	@echo "Starting in dev mode..."
+	@echo "Building dev mode..."
 	cp .env.dev .env
-	docker-compose build dev
+	docker-compose build dev_db dev pg_admin
 
 dev:
 	@echo "Starting in dev mode..."
 	cp .env.dev .env
-	@echo "--- .env content ---"
-	@cat .env
-	docker-compose up dev
+	docker-compose up dev_db dev pg_admin
 
+build-prod:
+	@echo "Starting in prod mode..."
+	cp .env.prod .env
+	docker-compose build prod_db app pg_admin
 
-
-
-dev:
-	@echo "Starting in dev mode..."
-	cp .env.dev .env
-	@echo "--- .env content ---"
-	@cat .env
-	docker-compose run --rm dev
+prod:
+	@echo "Starting in prod mode..."
+	cp .env.prod .env
+	docker-compose up prod_db app pg_admin
 
 down:
 	docker-compose down
@@ -45,5 +38,5 @@ logs:
 
 rebuild:
 	cp .env.$(MODE) .env
-	MODE=$(MODE) docker-compose up --build --force-recreate
+	docker-compose up --build --force-recreate
 
