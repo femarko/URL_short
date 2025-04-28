@@ -1,5 +1,10 @@
 MODE ?= prod
 
+SERVICES_DEV = dev_db dev dev_asyncclient
+SERVICES_PROD = prod_db prod prod_asyncclient
+SERVICES_TEST = test_db test
+SERVICES = $(SERVICES_$(shell echo $(MODE) | tr 'a-z' 'A-Z'))
+
 build:
 	@echo "Building for $(MODE) mode..."
 	cp .env.$(MODE) .env

@@ -6,6 +6,7 @@ services:
     build:
       context: .
       target: prod
+    container_name: prod
     env_file:
       - .env
     environment:
@@ -18,17 +19,39 @@ services:
       - |
         python3 -m src.shortener_app.db.drop_create_tables &&
         python3 -m src.main
-        python3 -m src.asyncclient
     depends_on:
       prod_db:
         condition: service_healthy
     ports:
       - "8080:8080"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/check/health" ]
+      interval: 5s
+      timeout: 2s
+      retries: 10
+      start_period: 30s
+
+  prod_asyncclient:
+    build:
+      context: .
+      target: prod
+    container_name: prod_asyncclient
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST
+      - POSTGRES_PORT
+      - MODE
+    command: python3 -m src.asyncclient
+    depends_on:
+      prod:
+        condition: service_started
 
   dev:
     build:
       context: .
       target: dev
+    container_name: dev
     env_file:
       - .env
     environment:
@@ -41,7 +64,6 @@ services:
       - |
         python3 -m src.shortener_app.db.drop_create_tables &&
         python3 -m src.main
-        python3 -m src.asyncclient
     depends_on:
       dev_db:
         condition: service_healthy
@@ -49,11 +71,36 @@ services:
       - "8080:8080"
     volumes:
       - .:/app
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/check/health" ]
+      interval: 5s
+      timeout: 2s
+      retries: 10
+      start_period: 30s
+
+  dev_asyncclient:
+    build:
+      context: .
+      target: dev
+    container_name: dev_asyncclient
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST
+      - POSTGRES_PORT
+      - MODE
+    command: python3 -m src.asyncclient
+    depends_on:
+      dev:
+        condition: service_healthy
+    volumes:
+      - .:/app
 
   test:
     build:
       context: .
       target: test
+    container_name: test
     env_file:
       - .env
     environment:
