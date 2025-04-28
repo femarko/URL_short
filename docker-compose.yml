@@ -45,7 +45,7 @@ services:
     command: python3 -m src.asyncclient
     depends_on:
       prod:
-        condition: service_started
+        condition: service_healthy
 
   dev:
     build:

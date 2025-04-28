@@ -1,3 +1,5 @@
+import os
+
 import aiohttp
 import asyncio
 
@@ -20,5 +22,7 @@ async def get_original_url(base_url: str, url_id: int) -> tuple[int, dict[str, s
 
 
 if __name__ == "__main__":
-    asyncio.run(get_shortened_url("https://google.com", "http://0.0.0.0:8080"))
-    asyncio.run(get_original_url("http://0.0.0.0:8080", 1))
+    print(
+        asyncio.run(get_shortened_url("https://example.com", f"http://{os.getenv('MODE')}:8080"))
+    )
+    print(asyncio.run(get_original_url(f"http://{os.getenv('MODE')}:8080", 1)))

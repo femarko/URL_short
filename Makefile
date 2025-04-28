@@ -1,7 +1,7 @@
 MODE ?= prod
 
-SERVICES_DEV = dev_db dev dev_asyncclient
-SERVICES_PROD = prod_db prod prod_asyncclient
+SERVICES_DEV = dev_db dev dev_asyncclient pg_admin
+SERVICES_PROD = prod_db prod prod_asyncclient pg_admin
 SERVICES_TEST = test_db test
 SERVICES = $(SERVICES_$(shell echo $(MODE) | tr 'a-z' 'A-Z'))
 
