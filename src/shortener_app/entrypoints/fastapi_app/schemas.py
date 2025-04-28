@@ -17,3 +17,6 @@ class Failure(BaseModel):
 class CutUrlFailure(Failure):
     original_url: str
 
+
+class HealthCheck(BaseModel):
+    status: str

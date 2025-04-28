@@ -5,13 +5,15 @@ import src.shortener_app.domain.errors as domain_errors
 
 def create_short_url(url: str) -> str:
     """
-    Shortens a given URL using the TinyURL service.
+    Function that creates a shortened URL using tinyurl.com service.
 
-    :param url: The URL to be shortened.
+    Raises:
+        :class:`domain_errors.UnexpectedError`: when unexpected server error occurs.
+
+    :param url: URL to be shortened
     :type url: str
-    :return: The shortened URL.
+    :return: shortened URL
     :rtype: str
-    :raises pyshorteners.exceptions.ShorteningErrorException: If the TinyURL service returns an error.
     """
     s = pyshorteners.Shortener()
     try:

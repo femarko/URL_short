@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from src.shortener_app.entrypoints.fastapi_app.url_shorter_routes import url_shotter_routes
-from src.shortener_app.entrypoints.fastapi_app.healthcheck_routes import healthcheck_route
+from src.shortener_app.entrypoints.fastapi_app.routes.url_shorterning import url_shotter_routes
+from src.shortener_app.entrypoints.fastapi_app.routes.healthcheck import healthcheck_route
 
 
 main_router = APIRouter()

@@ -18,7 +18,7 @@ url_shotter_routes = APIRouter()
     status_code=201,
     response_model=schemas.CutUrlSuccess,
     summary="Shorten the URL and save it in the database if it does not already exist.",
-    tags=["Shorten url"],
+    tags=["URL shortening"],
     responses={
         200: {
             "model": schemas.CutUrlSuccess,
@@ -50,7 +50,7 @@ async def cut_url(original_url: schemas.URL, response: Response) -> schemas.CutU
     status_code=307,
     response_model=None,
     summary="Accepts the entry ID as a path parameter and redirects to the address set by the original URL.",
-    tags=["Redirect by ID"],
+    tags=["URL shortening"],
     responses={
         404: {"model": schemas.Failure, "description": "URL not found."},
         500: {"model": schemas.Failure, "description": "Unexpected server error."}
