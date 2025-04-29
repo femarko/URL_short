@@ -20,7 +20,7 @@ class Config:
     Attributes
     ----------
     mode : str
-        The runtime mode of the application. Can be "prod" or "dev".
+        The runtime mode of the application. Can be "prod", "test" or "dev".
     db_url : str
         Fully constructed async PostgreSQL connection URL.
     """
