@@ -12,11 +12,13 @@ healthcheck_route = APIRouter()
     summary="Endpoint for the application's health check",
     response_model=schemas.HealthCheck
 )
-async def health_check() -> dict[str, str]:
+async def health_check() -> schemas.HealthCheck:
     """
-    Endpoint for the application's health check
+    Endpoint for the application's health check.
 
-    :return: Application status
-    :rtype: dict[str, str]
+    The response to this endpoint will always be a JSON object with a single key
+    ``status`` with value ``"OK"``.
+
+    :return: a JSON object with a single key ``status`` with value ``"OK"``
     """
-    return {"status": "OK"}
+    return schemas.HealthCheck(status="OK")

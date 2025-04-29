@@ -5,11 +5,11 @@ import src.shortener_app.entrypoints.fastapi_app.schemas as schemas
 
 from src.shortener_app.service_layer import app_manager
 from src.shortener_app.service_layer.unit_of_work import UnitOfWork
-from src.shortener_app.orm_tool.init_orm_tool import get_inialized_orm_tool
+from src.shortener_app.orm_tool.init_orm_tool import get_initialized_orm_tool
 from src.shortener_app.domain import errors as domain_errors
 
 
-orm_tool = get_inialized_orm_tool()
+orm_tool = get_initialized_orm_tool()
 url_shotter_routes = APIRouter()
 
 
@@ -30,6 +30,18 @@ url_shotter_routes = APIRouter()
     }
 )
 async def cut_url(original_url: schemas.URL, response: Response) -> schemas.CutUrlSuccess | JSONResponse:
+    """
+    Shortens a given URL and saves it in the database if it does not already exist.
+
+    :param original_url: The original URL to be shortened.
+    :type original_url: schemas.URL
+    :param response: The response object to modify the status code if URL already exists.
+    :type response: Response
+    :return: A response containing the shortened URL and its ID, or an error message.
+    :rtype: schemas.CutUrlSuccess | JSONResponse
+    :raises domain_errors.UnexpectedError: If an unexpected server error occurs.
+    :raises domain_errors.DBError: If a database error occurs.
+    """
     try:
         short_url: str = app_manager.cut_url(original_url=str(original_url.url))
         urls_instance_id, is_saved_to_db = await app_manager.save_urls(
@@ -57,6 +69,16 @@ async def cut_url(original_url: schemas.URL, response: Response) -> schemas.CutU
     }
 )
 async def get_original_url(shorten_url_id: int) -> RedirectResponse | JSONResponse:
+    """
+    Accepts the entry ID as a path parameter and redirects to the address set by the original URL.
+
+    :param shorten_url_id: The ID of the shortened URL to be redirected.
+    :type shorten_url_id: int
+    :return: A redirect response to the original URL, or an error message.
+    :rtype: RedirectResponse | JSONResponse
+    :raises domain_errors.UnexpectedError: If an unexpected server error occurs.
+    :raises domain_errors.DBError: If a database error occurs.
+    """
     try:
         original_url = await app_manager.get_original_url(
             urls_instance_id=shorten_url_id, uow=UnitOfWork(session_maker=orm_tool.session_maker)

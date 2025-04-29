@@ -1,7 +1,9 @@
 import os
-
 import aiohttp
 import asyncio
+
+
+"""This module contains async client functions to make requests to the server."""
 
 
 async def get_shortened_url(url_to_shorten: str, base_url: str) -> tuple[int, dict[str, str | int]]:

@@ -5,12 +5,41 @@ from src.shortener_app.service_layer.unit_of_work import UnitOfWork
 from src.shortener_app.domain.models import URLShortened
 
 
+"""
+Functions of this module make domain layer and database interface layer to interact, providing results, which 
+can be requested and received through the application's entry points.
+"""
+
+
 def cut_url(original_url: str) -> str:
+    """
+    Function that creates a shortened URL using tinyurl.com service.
+
+    :param original_url: URL to be shortened
+    :type original_url: str
+    :return: shortened URL
+    :rtype: str
+    :raises: :class:`domain_errors.UnexpectedError` when unexpected server error occurs.
+    """
     short_url = domain_services.create_short_url(url=original_url)
     return short_url
 
 
 async def save_urls(original_url: str, short_url: str, uow: UnitOfWork) -> tuple[int, bool]:
+    """
+    Function that saves shortened URL to the database.
+
+    :param original_url: URL to be saved
+    :type original_url: str
+    :param short_url: shortened URL
+    :type short_url: str
+    :param uow: unit of work
+    :type uow: UnitOfWork
+    :return: id of saved URL and boolean indicating whether URL was saved or just retrieved
+    :rtype: tuple[int, bool]
+    :raises: :class:`domain_errors.AlreadyExistsError` when URL is already saved in the database
+    :raises: :class:`domain_errors.UnexpectedError` when unexpected server error occurs
+    """
     try:
         async with uow:
             urls_instance = URLShortened(original_url=original_url, short_url=short_url)
@@ -27,6 +56,18 @@ async def save_urls(original_url: str, short_url: str, uow: UnitOfWork) -> tuple
 
 
 async def get_original_url(urls_instance_id: int, uow: UnitOfWork) -> str:
+    """
+    Function that retrieves original URL from the database.
+
+    :param urls_instance_id: id of shortened URL
+    :type urls_instance_id: int
+    :param uow: unit of work
+    :type uow: UnitOfWork
+    :return: original URL
+    :rtype: str
+    :raises: :class:`domain_errors.NotFoundError` when URL is not found in the database
+    :raises: :class:`domain_errors.UnexpectedError` when unexpected server error occurs
+    """
     async with uow:
         try:
             result: URLShortened = await uow.url_repo.get(instance_id=urls_instance_id)
@@ -35,14 +76,3 @@ async def get_original_url(urls_instance_id: int, uow: UnitOfWork) -> str:
         if not result:
             raise domain_errors.NotFoundError(message_prefix="The url")
         return result.original_url
-
-
-async def delete_url(urls_instance_id: int, uow: UnitOfWork) -> dict[str, str | int]:
-    async with uow:
-        urls_instance_to_delete = await uow.url_repo.get(instance_id=urls_instance_id)
-        if not urls_instance_to_delete:
-            raise domain_errors.NotFoundError
-        deleted_urls_params: dict[str, str | int] = urls_instance_to_delete.get_params()
-        await uow.url_repo.delete(urls_instance_to_delete)
-        await uow.commit()
-    return deleted_urls_params
