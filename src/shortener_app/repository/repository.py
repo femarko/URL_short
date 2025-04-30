@@ -1,12 +1,10 @@
-from typing import TypeVar, Generic
+from typing import Generic
 from typing_extensions import Unpack
 
 from src.shortener_app.domain.models import URLShortened, URLShortenedDict
 from src.shortener_app.domain import errors as domain_errors
 from src.shortener_app.orm_tool.init_orm_tool import get_initialized_orm_tool
-from src.shortener_app.protocols.repo_proto import RepoProto, T
-from src.shortener_app.protocols.session_proto import SessionProto
-
+from src.shortener_app.domain.protocols import T, RepoProto, SessionProto
 
 orm_tool = get_initialized_orm_tool()
 

@@ -1,7 +1,7 @@
 import src.shortener_app.domain.services as domain_services
 import src.shortener_app.domain.errors as domain_errors
 
-from src.shortener_app.service_layer.unit_of_work import UnitOfWork
+from src.shortener_app.domain.protocols import UoWProto
 from src.shortener_app.domain.models import URLShortened
 
 
@@ -25,7 +25,7 @@ def cut_url(original_url: str) -> str:
     return short_url
 
 
-async def save_urls(original_url: str, short_url: str, uow: UnitOfWork) -> tuple[int, bool]:
+async def save_urls(original_url: str, short_url: str, uow: UoWProto) -> tuple[int, bool]:
     """
     Function that saves shortened URL to the database.
 
@@ -34,7 +34,7 @@ async def save_urls(original_url: str, short_url: str, uow: UnitOfWork) -> tuple
     :param short_url: shortened URL
     :type short_url: str
     :param uow: unit of work
-    :type uow: UnitOfWork
+    :type uow: UoWProto
     :return: id of saved URL and boolean indicating whether URL was saved or just retrieved
     :rtype: tuple[int, bool]
     :raises: :class:`domain_errors.AlreadyExistsError` when URL is already saved in the database
@@ -55,14 +55,14 @@ async def save_urls(original_url: str, short_url: str, uow: UnitOfWork) -> tuple
             return old_urls_instance_id, False
 
 
-async def get_original_url(urls_instance_id: int, uow: UnitOfWork) -> str:
+async def get_original_url(urls_instance_id: int, uow: UoWProto) -> str:
     """
     Function that retrieves original URL from the database.
 
     :param urls_instance_id: id of shortened URL
     :type urls_instance_id: int
     :param uow: unit of work
-    :type uow: UnitOfWork
+    :type uow: UoWProto
     :return: original URL
     :rtype: str
     :raises: :class:`domain_errors.NotFoundError` when URL is not found in the database

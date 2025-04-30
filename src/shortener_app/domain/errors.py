@@ -1,6 +1,15 @@
 from typing import Optional
 
 
+"""
+Exceptions
+==========
+
+This module defines custom exception classes used across the application
+to encapsulate low-level errors and expose them in a domain-specific form.
+"""
+
+
 class NotFoundError(Exception):
     """
     Exception that is raised when no entity is found with the given parameters.

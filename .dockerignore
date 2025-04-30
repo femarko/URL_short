@@ -19,3 +19,4 @@ Dockerfile
 Makefile
 htmlcov/
 *__pycache__
+path_definitions.py
