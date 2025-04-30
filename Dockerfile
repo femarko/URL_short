@@ -3,7 +3,6 @@ WORKDIR /app
 COPY requirements.txt .
 RUN apk add --no-cache curl && python3 -m pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 COPY src /app/src
-COPY path_definitions.py /app
 
 FROM base AS dev
 COPY requirements-dev.txt .
