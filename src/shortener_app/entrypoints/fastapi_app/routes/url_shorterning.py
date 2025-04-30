@@ -3,9 +3,9 @@ from fastapi.responses import RedirectResponse, JSONResponse
 
 import src.shortener_app.entrypoints.fastapi_app.schemas as schemas
 
-from src.shortener_app.service_layer import app_manager
-from src.shortener_app.service_layer.unit_of_work import UnitOfWork
-from src.shortener_app.orm_tool.init_orm_tool import get_initialized_orm_tool
+from src.shortener_app.application import app_manager
+from src.shortener_app.application.unit_of_work import UnitOfWork
+from src.shortener_app.infrastructure.orm_tool.init_orm_tool import get_initialized_orm_tool
 from src.shortener_app.domain import errors as domain_errors
 
 

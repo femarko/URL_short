@@ -17,7 +17,7 @@ services:
       - sh
       - -c
       - |
-        python3 -m src.shortener_app.db.drop_create_tables &&
+        python3 -m src.shortener_app.infrastructure.drop_create_tables &&
         python3 -m src.main
     depends_on:
       prod_db:
@@ -62,7 +62,7 @@ services:
       - sh
       - -c
       - |
-        python3 -m src.shortener_app.db.drop_create_tables &&
+        python3 -m src.shortener_app.infrastructure.drop_create_tables &&
         python3 -m src.main
     depends_on:
       dev_db:

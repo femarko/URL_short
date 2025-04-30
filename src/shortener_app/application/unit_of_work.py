@@ -1,8 +1,8 @@
 from typing import Callable
 
 import src.shortener_app.domain.errors as domain_errors
-from src.shortener_app.orm_tool.init_orm_tool import get_initialized_orm_tool
-from src.shortener_app.repository.repository import URLRepository
+from src.shortener_app.infrastructure.orm_tool.init_orm_tool import get_initialized_orm_tool
+from src.shortener_app.infrastructure.repository import URLRepository
 from src.shortener_app.domain.protocols import RepoProto
 
 orm_tool = get_initialized_orm_tool()

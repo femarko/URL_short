@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from sqlalchemy import text
 
 from src.shortener_app.domain.models import URLShortened
-from src.shortener_app.repository.repository import URLRepository
+from src.shortener_app.infrastructure.repository import URLRepository
 
 
 @pytest.mark.asyncio(loop_scope="session")

@@ -1,6 +1,6 @@
 from src.shortener_app.entrypoints.fastapi_app.init_app import create_app
 from src.shortener_app.entrypoints.fastapi_app.run_app import run_app
-from src.shortener_app.orm_tool.init_orm_tool import get_initialized_orm_tool
+from src.shortener_app.infrastructure.orm_tool.init_orm_tool import get_initialized_orm_tool
 
 """
 Main entry point for the application.
