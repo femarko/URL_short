@@ -1,13 +1,15 @@
 # URL Shortener
-A clean, modular FastAPI application for shortening URLs using TinyURL. Built with a DDD-inspired architecture, 
+Asynchronous FastAPI-based service that shortens URLs using the 
+TinyURL API and redirects by ID via a local database.
+Built with a DDD-inspired architecture, 
 type-checked interfaces, and layered separation of concerns.
 ## Features
 - FastAPI-based REST API with async support
 - Two main endpoints:
-  - POST /: Saves original and shortened URLs to DB
-    - Returns 201 Created if new URL added
-    - Returns 200 OK if URL already exists
-  - GET /{id}: Redirects to the original URL via 307 Temporary Redirect
+  - `POST /`: Saves original and shortened URLs to DB
+    - Returns `201 Created` if new URL added
+    - Returns `200 OK` if URL already exists
+  - `GET /{id}`: Redirects to the original URL via 307 Temporary Redirect
 - TinyURL service integration
 - PostgreSQL as the primary database
 - PGAdmin available for DB inspection
@@ -15,6 +17,7 @@ type-checked interfaces, and layered separation of concerns.
 - Domain-Driven Design (DDD) layout
 - Dockerized for consistent environments
 - Tested with Pytest (74% coverage)
+- Interactive API docs via Swagger
 ## Project Structure
 ```
 .                                           # Project root
@@ -56,37 +59,55 @@ type-checked interfaces, and layered separation of concerns.
 ```
 ## API Overview
 The API provides two endpoints:
-1. `POST /`
 
-    Creates a shortened URL.
-   - If the original URL is new, returns:
-     - 201 Created
-     - JSON: { "id": 123, "short_url": "http://..." }
+`POST /`
 
-   - If the original URL already exists in the database, returns:
-     - 200 OK
-     - JSON: { "id": 123, "short_url": "http://..." }
+   - Accepts a JSON body with an original URL.
+   - Creates a new record and returns:
+     - `201 Created` if the URL is new.
+     - `200 OK` if the URL already exists in the database.
+   - Response body includes the `short_url` and `id`.
 
+`GET /{id}`
 
+   - Redirects to the original URL using HTTP status code `307 Temporary Redirect`.
+   - `id` is passed as a path parameter.
+## Environment Configuration
+To support different modes (dev, prod, test), the project uses three `.env` files:
+- `.env.dev` for dev mode
+- `.env.prod` for prod mode
+- `.env.test` for test mode
 
-2. `GET /{id}`
+These must be placed in the project root directory and named exactly as shown.\
+They are automatically copied to `.env` depending on the mode 
+specified in the Makefile commands.\
+Example: `make run MODE=dev` will copy `.env.dev` to `.env`.
 
-    Redirects to the original URL associated with the given ID.
-    - returns: 307 Temporary Redirect
-    - redirects to the original URL
+>Currently, the dotenv files do not contain real secrets and are intended 
+> for demonstration purposes only. If real secrets are introduced, these 
+> files must be excluded from version control.
 
 ## Running the App
+This project uses GNU Make to streamline running and testing the application in Docker.
 ### Build containers (dev / prod / test):
 ```bash
 $ make build MODE=prod   # or dev / test
 ```
-### Run app (dev / prod / test):
+### Run the app (dev / prod / test):
 ```bash
 $ make run MODE=prod   # FastAPI app + database + asyncclient + PGAdmin
 ```
 ### Run tests:
 ```bash
 $ make test
+```
+### Stop containers:
+```bash
+$ make down
+```
+### View logs:
+```bash
+$ make logs
 ```
 ### Async client:
 In dev and prod modes, the app launches an internal asyncclient.py module that sends demo HTTP requests to the API.
