@@ -2,9 +2,9 @@
 venv_url_short/
 .env
 .test.env
-.env.test
-.env.dev
-.env.prod
+#.env.test
+#.env.dev
+#.env.prod
 tests/.env.test
 *__pycache__/
 .idea/
