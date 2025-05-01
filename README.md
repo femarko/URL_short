@@ -105,10 +105,6 @@ $ make test
 ```bash
 $ make down
 ```
-### View logs:
-```bash
-$ make logs
-```
 ### Async client:
 In dev and prod modes, the app launches an internal `asyncclient.py` module that sends demo HTTP requests to the API.
 The responses are printed directly into the container logs:
@@ -116,8 +112,12 @@ The responses are printed directly into the container logs:
 prod_asyncclient      | (201, {'id': 1, 'short_url': 'https://tinyurl.com/yqp7ct'})
 prod_asyncclient      | (200, {'original_url': 'https://example.com/'})
 ```
-## Swagger UI
-Once running, access the automatically generated Swagger UI at:
-```bash
-http://localhost:8080/docs
-```
+### Swagger UI & PGAdmin
+
+Once the application is running, you can access:
+
+- **Swagger UI**: [http://localhost:8080/docs](http://localhost:8080/docs)  
+  (for exploring and testing the API)
+
+- **PGAdmin**: [http://localhost:5050](http://localhost:5050)  
+  (for managing the PostgreSQL database)
