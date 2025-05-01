@@ -9,7 +9,7 @@ type-checked interfaces, and layered separation of concerns.
   - `POST /`: Saves original and shortened URLs to DB
     - Returns `201 Created` if new URL added
     - Returns `200 OK` if URL already exists
-  - `GET /{id}`: Redirects to the original URL via 307 Temporary Redirect
+  - `GET /{id}`: Redirects to the original URL via `307 Temporary Redirect`
 - TinyURL service integration
 - PostgreSQL as the primary database
 - PGAdmin available for DB inspection
@@ -110,7 +110,7 @@ $ make down
 $ make logs
 ```
 ### Async client:
-In dev and prod modes, the app launches an internal asyncclient.py module that sends demo HTTP requests to the API.
+In dev and prod modes, the app launches an internal `asyncclient.py` module that sends demo HTTP requests to the API.
 The responses are printed directly into the container logs:
 ```
 prod_asyncclient      | (201, {'id': 1, 'short_url': 'https://tinyurl.com/yqp7ct'})
