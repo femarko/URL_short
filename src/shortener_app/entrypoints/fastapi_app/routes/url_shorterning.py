@@ -33,14 +33,16 @@ async def cut_url(original_url: schemas.URL, response: Response) -> schemas.CutU
     """
     Shortens a given URL and saves it in the database if it does not already exist.
 
-    :param original_url: The original URL to be shortened.
-    :type original_url: schemas.URL
-    :param response: The response object to modify the status code if URL already exists.
-    :type response: Response
-    :return: A response containing the shortened URL and its ID, or an error message.
-    :rtype: schemas.CutUrlSuccess | JSONResponse
-    :raises domain_errors.UnexpectedError: If an unexpected server error occurs.
-    :raises domain_errors.DBError: If a database error occurs.
+    **Parameters:**
+    - `original_url` (schemas.URL): The original URL to be shortened.
+    - `response` (Response): The response object to modify the status code if the URL already exists.
+
+    **Returns:**
+    - `schemas.CutUrlSuccess` or `JSONResponse`: A response containing the shortened URL and its ID, or an error message.
+
+    **Raises:**
+    - `domain_errors.UnexpectedError`: If an unexpected server error occurs.
+    - `domain_errors.DBError`: If a database error occurs.
     """
     try:
         short_url: str = app_manager.cut_url(original_url=str(original_url.url))
@@ -72,12 +74,15 @@ async def get_original_url(shorten_url_id: int) -> RedirectResponse | JSONRespon
     """
     Accepts the entry ID as a path parameter and redirects to the address set by the original URL.
 
-    :param shorten_url_id: The ID of the shortened URL to be redirected.
-    :type shorten_url_id: int
-    :return: A redirect response to the original URL, or an error message.
-    :rtype: RedirectResponse | JSONResponse
-    :raises domain_errors.UnexpectedError: If an unexpected server error occurs.
-    :raises domain_errors.DBError: If a database error occurs.
+    **Parameters:**
+    - `shorten_url_id` (int): The ID of the shortened URL to be redirected.
+
+    **Returns:**
+    - Redirects to the original URL, or returns an error message.
+
+    **Raises:**
+    - `domain_errors.UnexpectedError`: If an unexpected server error occurs.
+    - `domain_errors.DBError`: If a database error occurs.
     """
     try:
         original_url = await app_manager.get_original_url(

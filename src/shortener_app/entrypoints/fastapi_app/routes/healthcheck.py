@@ -17,8 +17,9 @@ async def health_check() -> schemas.HealthCheck:
     Endpoint for the application's health check.
 
     The response to this endpoint will always be a JSON object with a single key
-    ``status`` with value ``"OK"``.
+    ``status`` with value `"OK"`.
 
-    :return: a JSON object with a single key ``status`` with value ``"OK"``
+    **Returns**:
+    - A JSON object with a single key `status` with value `"OK"`
     """
     return schemas.HealthCheck(status="OK")
